@@ -26,39 +26,29 @@ class HuaweiE3372(object):
         self.base_url = self.BASE_URL.format(host=host)
         self.session = requests.Session()
 
-    def switch_modem(self):
+    def switch_modem(self, state='1'):
         try:
-            # Ausschalten des Modems
-            #if not self._change_modem_state('0'):
-            #    print("Failed to turn off the modem.")
-            #    return False
-            # Warten für 10 Sekunden
-            # time.sleep(10)
-            # Einschalten des Modems
-            if self._change_modem_state('1'):
-                print("Modem successfully restarted.")
-                return True
-            else:
-                print("Failed to turn on the modem.")
-                return False
-        except Exception as ex:
-            print(f"Unexpected error during modem switching at {self.host}: {ex}")
-            return False
-
-    def _change_modem_state(self, state):
-        """Hilfsfunktion zum Ändern des Modemzustands"""
-        try:
+            # Get session and verification tokens from the modem
             r = self.session.get(self.base_url + self.TOKEN_URL, timeout=3)
             _dict = xmltodict.parse(r.text).get('response', None)
+
+            # Build the switch request
             headers = {
                 'Cookie': _dict['SesInfo'],
                 '__RequestVerificationToken': _dict['TokInfo']
             }
+
             data = '<?xml version="1.0" encoding="UTF-8"?><request><dataswitch>' + state + '</dataswitch></request>'
+
             r = self.session.post(self.base_url + self.SWITCH_URL, data=data, headers=headers, timeout=3)
-            return r.status_code == 200
+            if r.status_code == 200:
+                return True
+            else:
+                return False
+
         except Exception as ex:
-            print(f"Failed to change modem state to {state} at {self.host}: {ex}")
+            print("Failed to switch modem..")
+            print(ex)
             return False
 
 
