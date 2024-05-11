@@ -61,7 +61,7 @@ class HuaweiE3372(object):
 
 def load_configuration():
     config = configparser.ConfigParser()
-    config.read('modems.ini')
+    config.read('config.ini')
     dongles = {key: config['DONGLES'][key] for key in config['DONGLES']}
     proxys = {key: config['PROXYS'][key] for key in config['PROXYS']}
     associations = {key: proxys[config['ASSOCIATIONS'][key]] for key in config['ASSOCIATIONS']}
