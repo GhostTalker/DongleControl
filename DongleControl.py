@@ -33,10 +33,9 @@ def load_configuration():
 def get_public_ip(proxy):
   try:
     proxies = {
-      'http': f'http://{proxy}',
-      'https': f'https://{proxy}'
+      'http': f'http://{proxy}'
     }
-    response = requests.get('https://api.ipify.org', proxies=proxies, verify=False, timeout=10)
+    response = requests.get('http://api.ipify.org', proxies=proxies, timeout=10)
     if response.status_code == 200:
       return response.text.strip()
     else:
