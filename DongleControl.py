@@ -115,6 +115,7 @@ def change_ip_adress_of_dongles():
         toggle_dataswitch(dongle_id)
         if check_ip_change(dongle_id) is True:
             print(f"Neustart von {dongle_id} brachte keine neue IP. Powercyle USB....")
+            time.sleep(10)
             init_reboot_modem(dongle_id)
         elif check_ip_change(dongle_id) is False:
             print(f"Neustart von {dongle_id} hat geklappt.")
