@@ -1,42 +1,56 @@
-import sys
+#!/usr/bin/env /bin/python3
+#
+# DongleControl
+# Script to restart a 4g dongle
+#
+__author__ = "GhostTalker"
+__copyright__ = "Copyright 2023, The GhostTalker project"
+__version__ = "0.0.1"
+__status__ = "DEV"
+
 import requests
-import xmltodict
+import schedule
 import time
-class HuaweiE3372(object):
-  BASE_URL = 'http://{host}'
-  TOKEN_URL = '/api/webserver/SesTokInfo'
-  SWITCH_URL = '/api/dialup/mobile-dataswitch'
-  session = None
-  def __init__(self,host='10.100.1.1'):
-    self.host = host
-    self.base_url = self.BASE_URL.format(host=host)
-    self.session = requests.Session()
-  def switch_modem(self, state='1'):
-    try:
-      # Get session and verification tokens from the modem
-      r = self.session.get(self.base_url + self.TOKEN_URL, timeout=3)
-      _dict = xmltodict.parse(r.text).get('response', None)
-      # Build the switch request
-      headers = {
-        'Cookie': _dict['SesInfo'],
-        '__RequestVerificationToken': _dict['TokInfo']
-      }
-      data = '<?xml version: "1.0" encoding="UTF-8"?><request><dataswitch>' + state + '</dataswitch></request>'
-      r = self.session.post(self.base_url + self.SWITCH_URL, data=data, headers=headers, timeout=3)
-      if r.status_code == 200:
-        return True
-      else:
-        return False
-    except Exception as ex:
-      print("Failed to switch modem..")
-      print(ex)
-      return False
+import configparser
+
+
+def load_configuration():
+  config = configparser.ConfigParser()
+  config.read('config.ini')
+  dongles = {key: config['DONGLES'][key] for key in config['DONGLES']}
+  proxys = {key: config['PROXYS'][key] for key in config['PROXYS']}
+  associations = {key: proxys[config['ASSOCIATIONS'][key]] for key in config['ASSOCIATIONS']}
+  dongle_statuses = {dongle: {'IP': ip, 'Proxy': associations[dongle]} for dongle, ip in dongles.items()}
+
+  for dongle_id, details in dongle_statuses.items():
+    ext_ip = get_public_ip(details['Proxy'])
+    details['extIP'] = ext_ip if ext_ip else "Unavailable"
+
+  return dongle_statuses
+
+
+def get_public_ip(proxy):
+  try:
+    # Setzen des Proxy
+    proxies = {
+      'http': f'http://{proxy}',
+      'https': f'http://{proxy}'
+    }
+    # Anfragen an die API ipify.org senden
+    response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5)
+    if response.status_code == 200:
+      return response.text.strip()  # Gibt die reine IP-Adresse zurück
+    else:
+      print(f"Response returned with status code: {response.status_code}")
+      return "Response Error"
+  except requests.RequestException as e:
+    print(f"Failed to get public IP through proxy {proxy}: {e}")
+    return None
+
+
 def main():
-  e3372 = HuaweiE3372()
-  # Pass '1' for on
-  # Pass '0' for off
-  e3372.switch_modem('0')
-  time.sleep(15)
-  e3372.switch_modem('1')
+    dongle_statuses = load_configuration()
+    print(dongle_statuses)
+
 if __name__ == "__main__":
   main()
