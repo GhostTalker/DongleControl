@@ -12,7 +12,7 @@ import requests
 import schedule
 import time
 import configparser
-from datetime import datetime
+from datetime import datetime, timedelta
 from toggleDataSwitch import toggle_modem
 
 # Globale Variable
@@ -73,13 +73,58 @@ def update_extIP(dongle_id):
     if old_ip != new_ip and new_ip != "Unavailable":
         dongle_statuses[dongle_id]['lastIPChange'] = datetime.now().isoformat()
 
+def check_ip_change_interval(dongle_id):
+    global dongle_statuses
+    if 'lastIPChange' in dongle_statuses[dongle_id] and dongle_statuses[dongle_id]['lastIPChange']:
+        last_change_time = datetime.fromisoformat(dongle_statuses[dongle_id]['lastIPChange'])
+        current_time = datetime.now()
+        time_difference = current_time - last_change_time
+        if time_difference > timedelta(minutes=5):
+            return True  # Länger als 5 Minuten her
+        else:
+            return False  # Weniger als 5 Minuten her
+    else:
+        print(f"Kein gültiger Zeitstempel für IP-Änderung gefunden für {dongle_id}")
+        return None  # Kein Zeitstempel vorhanden
+
+
+def check_ip_change(dongle_id):
+    # Überprüfung, ob der letzte IP-Wechsel länger als 5 Minuten zurückliegt
+    if check_ip_change_interval(dongle_id) is True:
+        return True
+    elif check_ip_change_interval(dongle_id) is False:
+        return False
+    else:
+        return Null
+
+
+def powercycle_usb():
+    print("Noch keine Funktion")
+
+def change_ip_adress_of_dongles():
+    for dongle_id in dongle_statuses:
+        toggle_dataswitch(dongle_id)
+        if check_ip_change(dongle_id) is True:
+            print(f"Neustart von {dongle_id} brachte keine neue IP. Powercyle USB....")
+            powercycle_usb(dongle_id)
+        elif check_ip_change(dongle_id) is False:
+            print(f"Neustart von {dongle_id} hat geklappt.")
+        else:
+            print(f"Kein IP-Wechselzeitstempel verfügbar für {dongle_id}.")
+
 def main():
     global dongle_statuses
     load_configuration()
-    for dongle_id in dongle_statuses:
+    schedule.every(5).minutes.do(change_ip_adress_of_dongles)
 
-        toggle_dataswitch(dongle_id)
-    print(dongle_statuses)
+    try:
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print("DongleControl will be stopped")
+        exit(0)
 
 if __name__ == "__main__":
     main()
