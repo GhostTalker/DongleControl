@@ -26,7 +26,27 @@ class HuaweiE3372(object):
         self.base_url = self.BASE_URL.format(host=host)
         self.session = requests.Session()
 
-    def switch_modem(self, state='1'):
+    def switch_modem(self):
+        try:
+            # Ausschalten des Modems
+            if not self._change_modem_state('0'):
+                print("Failed to turn off the modem.")
+                return False
+            # Warten für 10 Sekunden
+            time.sleep(10)
+            # Einschalten des Modems
+            if self._change_modem_state('1'):
+                print("Modem successfully restarted.")
+                return True
+            else:
+                print("Failed to turn on the modem.")
+                return False
+        except Exception as ex:
+            print(f"Unexpected error during modem switching at {self.host}: {ex}")
+            return False
+
+    def _change_modem_state(self, state):
+        """Hilfsfunktion zum Ändern des Modemzustands"""
         try:
             r = self.session.get(self.base_url + self.TOKEN_URL, timeout=3)
             _dict = xmltodict.parse(r.text).get('response', None)
@@ -38,7 +58,7 @@ class HuaweiE3372(object):
             r = self.session.post(self.base_url + self.SWITCH_URL, data=data, headers=headers, timeout=3)
             return r.status_code == 200
         except Exception as ex:
-            print(f"Failed to switch modem at {self.host}: {ex}")
+            print(f"Failed to change modem state to {state} at {self.host}: {ex}")
             return False
 
 
@@ -78,7 +98,7 @@ def main():
         modem = HuaweiE3372(dongle_details['IP'])
 
         # Versuchen, den Dongle neu zu starten
-        if modem.switch_modem('1'):  # Der Parameter '1' könnte für "Neustart" stehen
+        if modem.switch_modem():  # Kein Parameter erforderlich, die Methode handhabt jetzt den Neustart komplett
             print(f"Der Dongle {dongle_id} wurde erfolgreich neu gestartet.")
         else:
             print(f"Fehler beim Neustart des Dongles {dongle_id}.")
