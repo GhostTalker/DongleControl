@@ -85,7 +85,7 @@ def get_public_ip(proxy):
             'https': f'http://{proxy}'
         }
         # Anfragen an die API ipify.org senden
-        response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5)
+        response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5, verify=False)
         if response.status_code == 200:
             return response.text.strip()  # Gibt die reine IP-Adresse zurück
         else:
