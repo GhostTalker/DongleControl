@@ -18,17 +18,26 @@ from toggleDataSwitch import toggle_modem
 dongle_statuses = {}
 
 def load_configuration():
-    global dongle_statuses
     config = configparser.ConfigParser()
     config.read('config.ini')
     dongles = {key: config['DONGLES'][key] for key in config['DONGLES']}
     proxys = {key: config['PROXYS'][key] for key in config['PROXYS']}
     associations = {key: proxys[config['ASSOCIATIONS'][key]] for key in config['ASSOCIATIONS']}
-    dongle_statuses = {dongle: {'IP': ip, 'Proxy': associations[dongle]} for dongle, ip in dongles.items()}
+    global dongle_statuses
+    dongle_statuses = {
+        dongle: {
+            'IP': ip,
+            'Proxy': associations[dongle],
+            'extIP': "Unavailable",
+            'lastIPChange': None  # Initialisieren des Zeitstempels
+        }
+        for dongle, ip in dongles.items()
+    }
+    update_all_extIPs()
 
-    for dongle_id, details in dongle_statuses.items():
-        ext_ip = get_public_ip(details['Proxy'])
-        details['extIP'] = ext_ip if ext_ip else "Unavailable"
+def update_all_extIPs():
+    for dongle_id in dongle_statuses:
+        update_extIP(dongle_id)
 
 def get_public_ip(proxy):
     try:
@@ -57,14 +66,17 @@ def toggle_dataswitch(dongle_id):
     update_extIP(dongle_id)
 
 def update_extIP(dongle_id):
-    global dongle_statuses
-    ext_ip = get_public_ip(dongle_statuses[dongle_id]['Proxy'])
-    dongle_statuses[dongle_id]['extIP'] = ext_ip if ext_ip else "Unavailable"
+    old_ip = dongle_statuses[dongle_id]['extIP']
+    new_ip = get_public_ip(dongle_statuses[dongle_id]['Proxy'])
+    dongle_statuses[dongle_id]['extIP'] = new_ip if new_ip else "Unavailable"
+    if old_ip != new_ip and new_ip != "Unavailable":
+        dongle_statuses[dongle_id]['lastIPChange'] = datetime.now().isoformat()
 
 def main():
     global dongle_statuses
     load_configuration()
     for dongle_id in dongle_statuses:
+
         toggle_dataswitch(dongle_id)
     print(dongle_statuses)
 
