@@ -29,11 +29,11 @@ class HuaweiE3372(object):
     def switch_modem(self):
         try:
             # Ausschalten des Modems
-            if not self._change_modem_state('0'):
-                print("Failed to turn off the modem.")
-                return False
+            #if not self._change_modem_state('0'):
+            #    print("Failed to turn off the modem.")
+            #    return False
             # Warten für 10 Sekunden
-            time.sleep(10)
+            # time.sleep(10)
             # Einschalten des Modems
             if self._change_modem_state('1'):
                 print("Modem successfully restarted.")
