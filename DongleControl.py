@@ -70,7 +70,21 @@ def get_public_ip(proxy):
 def main():
     dongle_statuses = load_configuration()
     print(dongle_statuses)
+    # Auswählen des spezifischen Dongles, den wir neu starten möchten
+    dongle_id = 'dongle_01'
+    if dongle_id in dongle_statuses:
+        dongle_details = dongle_statuses[dongle_id]
+        # Erstellen einer Instanz des HuaweiE3372 Modems mit der IP-Adresse des Dongles
+        modem = HuaweiE3372(dongle_details['IP'])
 
+        # Versuchen, den Dongle neu zu starten
+        if modem.switch_modem('1'):  # Der Parameter '1' könnte für "Neustart" stehen
+            print(f"Der Dongle {dongle_id} wurde erfolgreich neu gestartet.")
+        else:
+            print(f"Fehler beim Neustart des Dongles {dongle_id}.")
+    else:
+        print(f"Dongle {dongle_id} wurde nicht in der Konfiguration gefunden.")
+    print(dongle_statuses)
 
 if __name__ == "__main__":
     main()
