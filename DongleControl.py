@@ -34,6 +34,7 @@ def main():
   e3372 = HuaweiE3372()
   # Pass '1' for on
   # Pass '0' for off
+  e3372.switch_modem('0')
   e3372.switch_modem('1')
 if __name__ == "__main__":
   main()
