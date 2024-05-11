@@ -12,6 +12,7 @@ import requests
 import schedule
 import time
 import configparser
+from datetime import datetime
 from toggleDataSwitch import toggle_modem
 
 # Globale Variable
