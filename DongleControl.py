@@ -68,6 +68,8 @@ def main():
     for dongle in dongle_statuses:
         call_toggle_script(dongle_statuses[dongle]['IP'], '1')
 
+    dongle_statuses = load_configuration()
+    print(dongle_statuses)
 
 if __name__ == "__main__":
   main()
