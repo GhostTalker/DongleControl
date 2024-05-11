@@ -1,0 +1,11 @@
+[DONGLES]
+dongle_01=192.168.1.100
+dongle_02=192.168.1.101
+
+[PROXYS]
+proxy_01=192.168.2.100:8081
+proxy_02=192.168.2.101:8082
+
+[ASSOCIATIONS]
+dongle_01=proxy_01
+dongle_02=proxy_02
