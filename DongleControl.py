@@ -1,6 +1,7 @@
 import sys
 import requests
 import xmltodict
+import time
 class HuaweiE3372(object):
   BASE_URL = 'http://{host}'
   TOKEN_URL = '/api/webserver/SesTokInfo'
