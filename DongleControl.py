@@ -85,7 +85,7 @@ def get_public_ip(proxy):
             'https': f'http://{proxy}'
         }
         # Anfragen an die API ipify.org senden
-        response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5, verify=False)
+        response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5)
         if response.status_code == 200:
             return response.text.strip()  # Gibt die reine IP-Adresse zurück
         else:
@@ -116,10 +116,7 @@ def main():
 
         # Versuchen, den Dongle neu zu starten
         if modem.switch_modem():  # Kein Parameter erforderlich, die Methode handhabt jetzt den Neustart komplett
-            if update_public_ip(dongle_statuses, dongle_id):
-                print(f"Die externe IP-Adresse für {dongle_id} wurde erfolgreich aktualisiert.")
-            else:
-                print(f"Fehler oder {dongle_id} nicht gefunden in der Konfiguration.")
+            dongle_statuses = load_configuration()
 
             print("extIP nach der Aktualisierung:", dongle_statuses[dongle_id]['extIP'])
 
