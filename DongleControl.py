@@ -79,9 +79,18 @@ def load_configuration():
 
 def get_public_ip(proxy):
     try:
-        proxies = {'http': f'http://{proxy}', 'https': f'http://{proxy}'}
-        response = requests.get('https://wtfismyip.com/text', proxies=proxies, timeout=5, verify=False)
-        return response.text.strip()
+        # Setzen des Proxy
+        proxies = {
+            'http': f'http://{proxy}',
+            'https': f'http://{proxy}'
+        }
+        # Anfragen an die API ipify.org senden
+        response = requests.get('https://api.ipify.org', proxies=proxies, timeout=5)
+        if response.status_code == 200:
+            return response.text.strip()  # Gibt die reine IP-Adresse zurück
+        else:
+            print(f"Response returned with status code: {response.status_code}")
+            return "Response Error"
     except requests.RequestException as e:
         print(f"Failed to get public IP through proxy {proxy}: {e}")
         return None
