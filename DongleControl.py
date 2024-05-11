@@ -12,6 +12,7 @@ import requests
 import schedule
 import time
 import configparser
+import subprocess
 
 
 def load_configuration():
@@ -47,10 +48,26 @@ def get_public_ip(proxy):
     print(f"Failed to get public IP through proxy {proxy}: {e}")
     return None
 
+def call_toggle_script(host, state):
+    # Pfad zur Python-Executable und Skript angeben
+    result = subprocess.run(['python', 'toggleDataSwitch.py', host, state], capture_output=True, text=True)
+    if result.returncode == 0:
+      print("Toggle script executed successfully.")
+      print(result.stdout)
+    else:
+      print("Toggle script failed.")
+      print(result.stderr)
 
 def main():
     dongle_statuses = load_configuration()
     print(dongle_statuses)
+    for dongle in dongle_statuses:
+        call_toggle_script(dongle_statuses[dongle]['IP'], '0')
+
+    time.sleep(10)
+    for dongle in dongle_statuses:
+        call_toggle_script(dongle_statuses[dongle]['IP'], '1')
+
 
 if __name__ == "__main__":
   main()
