@@ -116,7 +116,7 @@ def main():
 
         # Versuchen, den Dongle neu zu starten
         if modem.switch_modem():  # Kein Parameter erforderlich, die Methode handhabt jetzt den Neustart komplett
-
+            update_public_ip(dongle_statuses, dongle_id)
             print("extIP von {dongle_id} nach der Aktualisierung:", dongle_statuses[dongle_id]['extIP'])
             print(f"Der Dongle {dongle_id} wurde erfolgreich neu gestartet.")
         else:
