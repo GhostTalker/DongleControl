@@ -86,10 +86,17 @@ def get_public_ip(proxy):
         print(f"Failed to get public IP through proxy {proxy}: {e}")
         return None
 
+def update_public_ip(dongle_statuses, dongle_id):
+    if dongle_id in dongle_statuses:
+        proxy_details = dongle_statuses[dongle_id]['Proxy']
+        new_ext_ip = get_public_ip(proxy_details)
+        dongle_statuses[dongle_id]['extIP'] = new_ext_ip if new_ext_ip else "Unavailable"
+        return True
+    return False
 
 def main():
     dongle_statuses = load_configuration()
-    print(dongle_statuses)
+    print("Vor der Aktualisierung:", dongle_statuses)
     # Auswählen des spezifischen Dongles, den wir neu starten möchten
     dongle_id = 'dongle_01'
     if dongle_id in dongle_statuses:
@@ -99,12 +106,18 @@ def main():
 
         # Versuchen, den Dongle neu zu starten
         if modem.switch_modem():  # Kein Parameter erforderlich, die Methode handhabt jetzt den Neustart komplett
+            if update_public_ip(dongle_statuses, dongle_id):
+                print(f"Die externe IP-Adresse für {dongle_id} wurde erfolgreich aktualisiert.")
+            else:
+                print(f"Fehler oder {dongle_id} nicht gefunden in der Konfiguration.")
+
+            print("Nach der Aktualisierung:", dongle_statuses)
+
             print(f"Der Dongle {dongle_id} wurde erfolgreich neu gestartet.")
         else:
             print(f"Fehler beim Neustart des Dongles {dongle_id}.")
     else:
         print(f"Dongle {dongle_id} wurde nicht in der Konfiguration gefunden.")
-    print(dongle_statuses)
 
 if __name__ == "__main__":
     main()
