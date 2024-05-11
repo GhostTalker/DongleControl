@@ -56,6 +56,7 @@ class HuaweiE3372(object):
             }
             data = '<?xml version="1.0" encoding="UTF-8"?><request><dataswitch>' + state + '</dataswitch></request>'
             r = self.session.post(self.base_url + self.SWITCH_URL, data=data, headers=headers, timeout=3)
+            print(r)
             return r.status_code == 200
         except Exception as ex:
             print(f"Failed to change modem state to {state} at {self.host}: {ex}")
