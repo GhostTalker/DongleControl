@@ -52,6 +52,7 @@ def get_public_ip(proxy):
             'User-Agent': 'curl/7.64.1'
         }
         response = requests.get('http://api.ipify.org', headers=headers, proxies=proxies, timeout=10)
+        print(response)
         if response.status_code == 200:
             return response.text.strip()
         else:
