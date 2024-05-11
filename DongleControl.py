@@ -50,7 +50,7 @@ def get_public_ip(proxy):
 
 def call_toggle_script(host, state):
     # Pfad zur Python-Executable und Skript angeben
-    result = subprocess.run(['python', 'toggleDataSwitch.py', host, state], capture_output=True, text=True)
+    result = subprocess.run(['python3', 'toggleDataSwitch.py', host, state], capture_output=True, text=True)
     if result.returncode == 0:
       print("Toggle script executed successfully.")
       print(result.stdout)
