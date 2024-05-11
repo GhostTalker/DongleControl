@@ -14,6 +14,7 @@ import time
 import configparser
 from datetime import datetime, timedelta
 from toggleDataSwitch import toggle_modem
+from rebootDongle import reboot_modem
 
 # Globale Variable
 dongle_statuses = {}
@@ -36,9 +37,11 @@ def load_configuration():
     }
     update_all_extIPs()
 
+
 def update_all_extIPs():
     for dongle_id in dongle_statuses:
         update_extIP(dongle_id)
+
 
 def get_public_ip(proxy):
     try:
@@ -58,6 +61,7 @@ def get_public_ip(proxy):
         print(f"Failed to get public IP through proxy {proxy}: {e}")
         return None
 
+
 def toggle_dataswitch(dongle_id):
     global dongle_statuses
     toggle_modem(dongle_statuses[dongle_id]['IP'], '0')
@@ -66,12 +70,14 @@ def toggle_dataswitch(dongle_id):
     time.sleep(10)
     update_extIP(dongle_id)
 
+
 def update_extIP(dongle_id):
     old_ip = dongle_statuses[dongle_id]['extIP']
     new_ip = get_public_ip(dongle_statuses[dongle_id]['Proxy'])
     dongle_statuses[dongle_id]['extIP'] = new_ip if new_ip else "Unavailable"
     if old_ip != new_ip and new_ip != "Unavailable":
         dongle_statuses[dongle_id]['lastIPChange'] = datetime.now().isoformat()
+
 
 def check_ip_change_interval(dongle_id):
     global dongle_statuses
@@ -98,8 +104,10 @@ def check_ip_change(dongle_id):
         return Null
 
 
-def powercycle_usb():
-    print("Noch keine Funktion")
+def reboot_modem(dongle_id):
+    print(f"Reboot von {dongle_id}")
+    reboot_modem(dongle_id)
+
 
 def change_ip_adress_of_dongles():
     for dongle_id in dongle_statuses:
@@ -111,6 +119,7 @@ def change_ip_adress_of_dongles():
             print(f"Neustart von {dongle_id} hat geklappt.")
         else:
             print(f"Kein IP-Wechselzeitstempel verfügbar für {dongle_id}.")
+
 
 def main():
     global dongle_statuses
