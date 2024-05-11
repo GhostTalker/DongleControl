@@ -99,6 +99,7 @@ def main():
     print("Vor der Aktualisierung:", dongle_statuses)
     # Auswählen des spezifischen Dongles, den wir neu starten möchten
     dongle_id = 'dongle_01'
+    print("extIP vor der Aktualisierung:", dongle_statuses[dongle_id][extIP])
     if dongle_id in dongle_statuses:
         dongle_details = dongle_statuses[dongle_id]
         # Erstellen einer Instanz des HuaweiE3372 Modems mit der IP-Adresse des Dongles
@@ -111,7 +112,7 @@ def main():
             else:
                 print(f"Fehler oder {dongle_id} nicht gefunden in der Konfiguration.")
 
-            print("Nach der Aktualisierung:", dongle_statuses)
+            print("extIP nach der Aktualisierung:", dongle_statuses[dongle_id][extIP])
 
             print(f"Der Dongle {dongle_id} wurde erfolgreich neu gestartet.")
         else:
