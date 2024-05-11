@@ -68,6 +68,12 @@ def main():
     time.sleep(10)
     for dongle in dongle_statuses:
         call_toggle_script(dongle_statuses[dongle]['IP'], '1')
+
+        ext_ip = get_public_ip(dongle_statuses[dongle]['Proxy'])
+        dongle_statuses[dongle]['extIP'] = ext_ip if ext_ip else "Unavailable"
+
+    time.sleep(10)
+    for dongle in dongle_statuses:
         ext_ip = get_public_ip(dongle_statuses[dongle]['Proxy'])
         dongle_statuses[dongle]['extIP'] = ext_ip if ext_ip else "Unavailable"
 
