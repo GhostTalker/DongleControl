@@ -48,6 +48,7 @@ def get_public_ip(proxy):
     print(f"Failed to get public IP through proxy {proxy}: {e}")
     return None
 
+
 def call_toggle_script(host, state):
     # Pfad zur Python-Executable und Skript angeben
     result = subprocess.run(['python3', 'toggleDataSwitch.py', host, state], capture_output=True, text=True)
@@ -67,8 +68,9 @@ def main():
     time.sleep(10)
     for dongle in dongle_statuses:
         call_toggle_script(dongle_statuses[dongle]['IP'], '1')
+        ext_ip = get_public_ip(dongle_statuses[dongle]['Proxy'])
+        dongle_statuses[dongle]['extIP'] = ext_ip if ext_ip else "Unavailable"
 
-    dongle_statuses = load_configuration()
     print(dongle_statuses)
 
 if __name__ == "__main__":
