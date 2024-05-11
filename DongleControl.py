@@ -105,7 +105,7 @@ def switch_and_check_ips(dongle_statuses):
 
 
 def main():
-    dongle_statuses = load_configuration
+    dongle_statuses = load_configuration()
     print(dongle_statuses)
     #schedule.every(10).minutes.do(switch_all_modems)  # Scheduling the task for every 10 minutes
 
