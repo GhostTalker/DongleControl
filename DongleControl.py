@@ -5,7 +5,7 @@
 #
 __author__ = "GhostTalker"
 __copyright__ = "Copyright 2023, The GhostTalker project"
-__version__ = "0.0.2"
+__version__ = "0.1.0"
 __status__ = "DEV"
 
 import requests
