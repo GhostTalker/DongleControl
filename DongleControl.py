@@ -80,7 +80,7 @@ def load_configuration():
 def get_public_ip(proxy):
     try:
         proxies = {'http': f'http://{proxy}'}
-        response = requests.get('https://wtfismyip.com/text', proxies=proxies, verify=False, timeout=5)
+        response = requests.get('https://wtfismyip.com/text', proxies=proxies, timeout=5)
         return response.text.strip()
     except requests.RequestException as e:
         print(f"Failed to get public IP through proxy {proxy}: {e}")
