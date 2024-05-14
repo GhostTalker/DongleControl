@@ -103,8 +103,8 @@ def check_ip_change(dongle_id):
         return None
 
 def init_reboot_modem(dongle_id):
-    log_with_timestamp(f"Reboot von {dongle_id}")
-    reboot_modem(dongle_id)
+    log_with_timestamp(f"Reboot von {dongle_ip}")
+    reboot_modem(dongle_statuses[dongle_id]['IP'])
     update_extIP(dongle_id)
     log_with_timestamp(f"Reboot von {dongle_id} durchgeführt. Neue IP ist: {dongle_statuses[dongle_id]['extIP']}")
 
@@ -114,7 +114,7 @@ def change_ip_adress_of_dongles():
         toggle_dataswitch(dongle_id)
         if check_ip_change(dongle_id) is True:
             log_with_timestamp(f"Neustart von {dongle_id} brachte keine neue IP. Powercyle USB....")
-            init_reboot_modem(dongle_statuses[dongle_id]['IP'])
+            init_reboot_modem(dongle_statuses[dongle_id])
         elif check_ip_change(dongle_id) is False:
             log_with_timestamp(f"Neustart von {dongle_id} hat geklappt. Neue IP ist: {dongle_statuses[dongle_id]['extIP']}")
         else:
@@ -125,7 +125,7 @@ def main():
     load_configuration()
     schedule.every(5).minutes.do(change_ip_adress_of_dongles)
     log_with_timestamp(f"Starte Scheduler for Dongle Restart.")
-    print(dongle_statuses)
+    change_ip_adress_of_dongles
 
     try:
         while True:
