@@ -125,6 +125,7 @@ def main():
     load_configuration()
     schedule.every(5).minutes.do(change_ip_adress_of_dongles)
     log_with_timestamp(f"Starte Scheduler for Dongle Restart.")
+    print(dongle_statuses)
 
     try:
         while True:
