@@ -103,6 +103,7 @@ def check_ip_change(dongle_id):
         return None
 
 def init_reboot_modem(dongle_id):
+    global dongle_statuses
     log_with_timestamp(f"Reboot von {dongle_id}")
     reboot_modem(dongle_statuses[dongle_id]['IP'])
     update_extIP(dongle_id)
