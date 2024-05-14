@@ -104,8 +104,10 @@ def check_ip_change(dongle_id):
 
 def init_reboot_modem(dongle_id):
     global dongle_statuses
+    dongle_ip = dongle_statuses[dongle_id]['IP']
+    print(dongle_ip)
     log_with_timestamp(f"Reboot von {dongle_id}")
-    reboot_modem(dongle_statuses[dongle_id]['IP'])
+    reboot_modem(dongle_ip)
     update_extIP(dongle_id)
     log_with_timestamp(f"Reboot von {dongle_id} durchgeführt. Neue IP ist: {dongle_statuses[dongle_id]['extIP']}")
 
