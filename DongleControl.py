@@ -103,7 +103,7 @@ def check_ip_change(dongle_id):
         return None
 
 def init_reboot_modem(dongle_id):
-    log_with_timestamp(f"Reboot von {dongle_ip}")
+    log_with_timestamp(f"Reboot von {dongle_id}")
     reboot_modem(dongle_statuses[dongle_id]['IP'])
     update_extIP(dongle_id)
     log_with_timestamp(f"Reboot von {dongle_id} durchgeführt. Neue IP ist: {dongle_statuses[dongle_id]['extIP']}")
